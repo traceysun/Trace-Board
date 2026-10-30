@@ -47,7 +47,7 @@
     <button id="traceToggle" class="trace-toggle floating"><span data-icon="sparkles"></span>Architecture studio <span class="keycap">A</span></button>
     <aside class="studio-panel floating" id="studioPanel" aria-label="Architecture studio">
       <div class="studio-heading"><div><span class="studio-symbol" data-icon="architecture"></span><h2>Architecture studio</h2></div><button class="icon-button small" data-close="studioPanel" aria-label="Close studio" data-icon="close"></button></div>
-      <div class="studio-tabs"><button class="active" data-panel="trace">Trace</button><button data-panel="properties">Properties</button><button data-panel="comments">Comments <span id="commentCount">0</span></button></div>
+      <div class="studio-tabs"><button class="active" data-panel="trace">Trace</button><button data-panel="draw">Draw</button><button data-panel="properties">Object</button><button data-panel="comments">Comments <span id="commentCount">0</span></button></div>
       <div id="studioContent"></div>
       <div class="studio-foot"><span class="status-dot"></span><span>Built for ideas, before blueprints.</span></div>
     </aside>
@@ -59,7 +59,7 @@
     <div id="popup" class="popup floating" hidden></div>
     <div id="presentation" class="presentation floating" hidden><button id="stopPresent" class="icon-button" aria-label="Exit presentation" data-icon="close"></button><button id="prevFrame" class="icon-button" aria-label="Previous frame" data-icon="left"></button><span id="presentLabel"></span><button id="nextFrame" class="icon-button" aria-label="Next frame" data-icon="right"></button></div>
     <div id="dropOverlay" hidden><span data-icon="upload"></span><h2>Make room for a new reference.</h2><p>Drop your floorplan image here</p></div>
-    <div id="toast" role="status" hidden></div>
+    <div id="drawingReadout" class="drawing-readout" role="status" hidden></div><div id="toast" role="status" hidden></div>
     <input type="file" id="imageInput" accept="image/*" hidden><input type="file" id="projectInput" accept="application/json,.json" hidden>
   </main>
   <dialog id="modal"><div id="modalContent"></div></dialog>

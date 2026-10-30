@@ -27,6 +27,20 @@ The Sites project identity and static directory are stored in `.openai/hosting.j
 - Image reference import, opacity, fade while drawing, layer visibility, and geometric sketch cleanup.
 - SVG and PNG export; JSON Trace projects preserve references, comments, and layers.
 
+## Precision drawing and double walls
+
+Open **Architecture studio → Draw**, or choose the **Wall** tool and its **Precision** button.
+
+- Choose drag input or click two points. Connected walls continue from the last endpoint; press Escape to finish.
+- Snap to existing endpoints and a configurable grid. Choose free, 15°, 45°, or 90° angle increments; Shift temporarily locks 90°.
+- Enter an exact length and/or angle before drawing. Angles use 0° to the right and 90° upward. Exact constraints take precedence over grid and endpoint snaps.
+- Select a segment to drag either endpoint, or edit its length, angle, and endpoint coordinates in **Object**.
+- Choose single-line or double-line walls. The three physical wall widths are 4″, 6″, and 8″. Matching double-wall corners receive mitered joins; branched junctions retain independent faces.
+- Wall outline weight is separate from physical width. New drawing strokes default to 2 px. Presets of 1, 1.5, and 2 px keep outlines light.
+- Print-scale lineweights use ½″ = 1′ → 2 px. Smaller print scales use thinner strokes. **Apply thin weights to drawing** updates existing editable drawing strokes and supports Undo.
+
+Calibrate pixels to a known real-world distance in **Trace** before relying on dimensions or wall widths. A print-scale annotation alone does not establish an uploaded image's pixel scale. Stroke weights are expressed at 100% board zoom and are retained in SVG exports.
+
 ## Persistence and limits
 
 Boards are stored under `trace-workspace-v2` in the browser's localStorage. An existing `trace-v1` drawing is preserved as a separate board during migration. Trace project exports provide a portable backup. Images may exceed browser storage limits; the save status reports this and a project can still be exported.
@@ -35,5 +49,5 @@ There is no live multiuser editing, cloud sync, automatic image recognition, PDF
 
 ## Checks
 
-Run `node --check dist/app.js`, `node --check dist/core.js`, and `node tests/geometry.cjs`.
-The geometry checks cover connected sketch cleanup, resizing mixed selections, degenerate horizontal geometry, and marquee containment.
+Run `node --check dist/app.js`, `node --check dist/core.js`, `node tests/geometry.cjs`, and `node tests/precision.cjs`.
+The checks cover connected sketch cleanup, mixed-selection resize, exact constraints, angle locks, endpoint magnets, parallel wall faces, mitered corners, scale conversion, and thin weights.

@@ -1,0 +1,14 @@
+/* Geometry shared by the editor and vector export. */
+(function(root){
+  const distance=(a,b)=>Math.hypot(b.x-a.x,b.y-a.y);
+  function snap(p,enabled=true,step=10){return enabled?{x:Math.round(p.x/step)*step,y:Math.round(p.y/step)*step}:{...p}}
+  function endpoint(a,b,straight=true,grid=true){b=snap(b,grid);if(!straight)return b;const angle=Math.round(Math.atan2(b.y-a.y,b.x-a.x)/(Math.PI/4))*Math.PI/4;const d=distance(a,b);return snap({x:a.x+Math.cos(angle)*d,y:a.y+Math.sin(angle)*d},grid)}
+  function simplify(points,tolerance=6){if(points.length<3)return points;let a=points[0],b=points.at(-1),den=distance(a,b),max=0,index=0;for(let i=1;i<points.length-1;i++){const p=points[i],d=den?Math.abs((b.y-a.y)*p.x-(b.x-a.x)*p.y+b.x*a.y-b.y*a.x)/den:distance(a,p);if(d>max){max=d;index=i}}return max>tolerance?[...simplify(points.slice(0,index+1),tolerance).slice(0,-1),...simplify(points.slice(index),tolerance)]:[a,b]}
+  function bounds(s){if(s.points){const xs=s.points.map(p=>p.x),ys=s.points.map(p=>p.y);return{x:Math.min(...xs),y:Math.min(...ys),w:Math.max(...xs)-Math.min(...xs),h:Math.max(...ys)-Math.min(...ys)}}if(s.x2!==undefined)return{x:Math.min(s.x,s.x2),y:Math.min(s.y,s.y2),w:Math.abs(s.x2-s.x),h:Math.abs(s.y2-s.y)};return{x:s.x,y:s.y,w:s.w||100,h:s.h||40}}
+  function union(objects){if(!objects.length)return{x:0,y:0,w:1000,h:750};const bs=objects.map(bounds);let x=Math.min(...bs.map(b=>b.x)),y=Math.min(...bs.map(b=>b.y));return{x,y,w:Math.max(...bs.map(b=>b.x+b.w))-x,h:Math.max(...bs.map(b=>b.y+b.h))-y}}
+  function move(s,dx,dy){const n={...s,x:(s.x||0)+dx,y:(s.y||0)+dy};if(s.x2!==undefined){n.x2=s.x2+dx;n.y2=s.y2+dy}if(s.points)n.points=s.points.map(p=>({x:p.x+dx,y:p.y+dy}));return n}
+  function resize(s,from,to){const sx=from.w?to.w/from.w:1,sy=from.h?to.h/from.h:1;const point=p=>({x:to.x+(p.x-from.x)*sx,y:to.y+(p.y-from.y)*sy});const n={...s,...point(s)};if(s.x2!==undefined){let end=point({x:s.x2,y:s.y2});n.x2=end.x;n.y2=end.y}else{n.w=(s.w||0)*sx;n.h=(s.h||0)*sy}if(s.points)n.points=s.points.map(point);return n}
+  function contains(a,b){return b.x>=a.x&&b.y>=a.y&&b.x+b.w<=a.x+a.w&&b.y+b.h<=a.y+a.h}
+  function clean(objects,settings){const grid=settings.snap,straight=settings.straight;return objects.flatMap(s=>{if(s.type==='sketch'){let pts=simplify(s.points,settings.tolerance||7);if(pts.length<2)return[];let start=snap(pts[0],grid);return pts.slice(1).map(p=>{const end=endpoint(start,p,straight,grid),line={...s,type:'wall',x:start.x,y:start.y,x2:end.x,y2:end.y};delete line.points;start=end;return line})}if(['wall','line'].includes(s.type)){const end=endpoint({x:s.x,y:s.y},{x:s.x2,y:s.y2},straight,grid);return{...s,x2:end.x,y2:end.y}}return s})}
+  const api={distance,snap,endpoint,simplify,bounds,union,move,resize,contains,clean};root.TraceGeometry=api;if(typeof module!=='undefined')module.exports=api;
+})(typeof window!=='undefined'?window:globalThis);

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Trace is a visual architecture workspace. Sketch, trace floorplans, organize ideas, and turn your marks into editable plans.">
+  <title>Trace — Your architecture workspace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="workspace">
+    <svg id="canvas" xmlns="http://www.w3.org/2000/svg" aria-label="Architecture whiteboard" tabindex="0">
+      <defs>
+        <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".85" fill="#c9c9d2"/></pattern>
+        <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke"/></marker>
+        <filter id="noteShadow" x="-15%" y="-15%" width="140%" height="150%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#262632" flood-opacity=".08"/></filter>
+      </defs>
+      <rect id="paper" width="100%" height="100%" fill="url(#dots)"/>
+      <g id="viewport"><g id="frameObjects"></g><g id="referenceObjects"></g><g id="drawingObjects"></g><g id="noteObjects"></g><g id="commentObjects"></g><g id="selectionObjects"></g><g id="draftObjects"></g></g>
+    </svg>
+    <div class="board-header floating">
+      <button class="brand" id="boardsButton" title="Your boards" aria-label="Your boards"><span class="brandmark">t<span>↗</span></span><strong>trace<span class="beta">BETA</span></strong></button>
+      <span class="divider"></span>
+      <div class="board-name"><input id="boardTitle" aria-label="Board name" value="Courtyard House"><span><i id="saveDot"></i><span id="saveStatus">All changes saved locally</span></span></div>
+      <button class="icon-button header-extra" id="starButton" title="Star board" aria-label="Star board" data-icon="star"></button>
+      <button class="icon-button" id="menuButton" title="Board menu" aria-label="Board menu" data-icon="menu"></button>
+    </div>
+    <div class="collaboration floating">
+      <button class="icon-button" id="searchButton" title="Find on board (⌘K)" aria-label="Find on board" data-icon="search"></button>
+      <span class="divider"></span>
+      <button class="icon-button" id="commentsButton" title="Board comments" aria-label="Board comments" data-icon="comment"></button>
+      <button class="icon-button" id="presentButton" title="Present frames" aria-label="Present frames" data-icon="present"></button>
+      <span class="user-avatar" title="Personal workspace — saved in your browser">Y</span>
+      <button class="export-button" id="exportButton"><span data-icon="export"></span><span>Export</span><span class="small-chevron">⌄</span></button>
+    </div>
+    <div class="board-location"><span class="workspace-name">PERSONAL WORKSPACE</span><span>/</span><span id="locationTitle">Courtyard House</span><span class="local-badge">Local board</span></div>
+    <div id="toolOptions" class="tool-options floating"></div>
+    <div class="toolrail floating" id="toolrail" role="toolbar" aria-label="Drawing tools"></div>
+    <div class="rail-bottom floating"><button class="icon-button" id="undoButton" aria-label="Undo" title="Undo (⌘Z)" data-icon="undo"></button><button class="icon-button" id="redoButton" aria-label="Redo" title="Redo (⌘⇧Z)" data-icon="redo"></button></div>
+    <button class="outline-toggle floating icon-button" id="outlineButton" title="Board outline" aria-label="Board outline" data-icon="layers"></button>
+    <aside class="outline-panel floating" id="outlinePanel" aria-label="Board outline">
+      <div class="panel-heading"><h2>Board outline</h2><button class="icon-button small" data-close="outlinePanel" aria-label="Close outline" data-icon="close"></button></div>
+      <div class="tabstrip"><button class="active" data-outline="frames">Frames <span id="frameCount">3</span></button><button data-outline="layers">Layers</button></div>
+      <div id="outlineContent"></div>
+      <button class="add-frame" id="addFrameButton"><span data-icon="plus"></span>Add frame</button>
+      <div class="outline-foot"><span data-icon="info"></span>Organize the big picture.</div>
+    </aside>
+    <button id="traceToggle" class="trace-toggle floating"><span data-icon="sparkles"></span>Architecture studio <span class="keycap">A</span></button>
+    <aside class="studio-panel floating" id="studioPanel" aria-label="Architecture studio">
+      <div class="studio-heading"><div><span class="studio-symbol" data-icon="architecture"></span><h2>Architecture studio</h2></div><button class="icon-button small" data-close="studioPanel" aria-label="Close studio" data-icon="close"></button></div>
+      <div class="studio-tabs"><button class="active" data-panel="trace">Trace</button><button data-panel="properties">Properties</button><button data-panel="comments">Comments <span id="commentCount">0</span></button></div>
+      <div id="studioContent"></div>
+      <div class="studio-foot"><span class="status-dot"></span><span>Built for ideas, before blueprints.</span></div>
+    </aside>
+    <div class="bottom-left floating"><button class="icon-button" id="templatesButton" title="Board templates" aria-label="Board templates" data-icon="layout"></button><span class="divider"></span><button class="icon-button" id="helpButton" title="Keyboard shortcuts" aria-label="Keyboard shortcuts" data-icon="help"></button><button class="icon-button" id="gridButton" title="Toggle dot grid" aria-label="Toggle dot grid" data-icon="grid"></button></div>
+    <div id="statusHint" class="status-hint"><span class="status-dot"></span><span>Space to pan · Scroll to zoom · Your ideas, without edges</span></div>
+    <div class="bottom-right floating"><button class="icon-button" id="minimapButton" aria-label="Toggle minimap" title="Minimap" data-icon="map"></button><span class="divider"></span><button class="icon-button" id="zoomOut" aria-label="Zoom out" data-icon="minus"></button><button id="zoomLabel">75%</button><button class="icon-button" id="zoomIn" aria-label="Zoom in" data-icon="plus"></button><span class="divider"></span><button class="icon-button" id="fitButton" aria-label="Fit all objects" title="Fit to content (1)" data-icon="fit"></button></div>
+    <div id="minimap" class="minimap floating" hidden><div><span>BOARD MAP</span><button class="icon-button small" id="minimapClose" aria-label="Close minimap" data-icon="close"></button></div><svg id="mapSvg" aria-label="Click map to navigate"></svg></div>
+    <div id="selectionBar" class="selection-bar floating" hidden></div>
+    <div id="popup" class="popup floating" hidden></div>
+    <div id="presentation" class="presentation floating" hidden><button id="stopPresent" class="icon-button" aria-label="Exit presentation" data-icon="close"></button><button id="prevFrame" class="icon-button" aria-label="Previous frame" data-icon="left"></button><span id="presentLabel"></span><button id="nextFrame" class="icon-button" aria-label="Next frame" data-icon="right"></button></div>
+    <div id="dropOverlay" hidden><span data-icon="upload"></span><h2>Make room for a new reference.</h2><p>Drop your floorplan image here</p></div>
+    <div id="toast" role="status" hidden></div>
+    <input type="file" id="imageInput" accept="image/*" hidden><input type="file" id="projectInput" accept="application/json,.json" hidden>
+  </main>
+  <dialog id="modal"><div id="modalContent"></div></dialog>
+  <script src="core.js"></script><script src="app.js"></script>
+</body>
+</html>
